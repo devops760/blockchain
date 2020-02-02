@@ -1,0 +1,11 @@
+---
+# vars file for alice-bob
+base_directory: /opt/substrate
+alice_port: 30333
+alice_ws_port: 9944
+alice_rpc_port: 9933
+bob_port: 30334
+bob_ws_port: 9945
+bob_rpc_port: 9934
+telemetry_url: "ws://telemetry.polkadot.io:1024"
+alice_ip: 127.0.0.1

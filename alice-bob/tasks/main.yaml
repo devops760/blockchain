@@ -1,0 +1,21 @@
+      - name: start alice's node
+        shell: "{{ base_directory }}/target/release/node-template --base-path /tmp/alice --chain local --alice --port {{ alice_port }} --ws-port {{ alice_ws_port }} --rpc-port {{ alice_rpc_port }}  --telemetry-url {{ telemetry_url }}  --validator &"
+        register: result
+
+      - name: Get the file_path
+        set_fact:
+          file_path: "{{ result.stderr_lines | list }}"
+          #        vars:
+          #regexp: 'Local node identity is:\"([^"]+)'
+
+      - name: debug
+        debug:
+          msg: "{{ item | regex_search(regexp,'\\1') }}"
+        vars:
+          regexp: 'Local node identity is:\s([^"]+)'
+   #       msg: "{{ item }}"
+        with_items: "{{ file_path[8] }}"
+        register: peerid
+
+      - name: start bob's node
+        shell: "{{ base_directory }}/target/release/node-template --base-path /tmp/bob --chain local --bob --port {{ bob_port }} --ws-port {{ bob_ws_port }} --rpc-port {{ bob_rpc_port }} --telemetry-url {{ telemetry_url }} --validator --bootnodes /ip4/{{ alice_ip }}/tcp/{{ alice_port }}/p2p/{{ peerid }} &"

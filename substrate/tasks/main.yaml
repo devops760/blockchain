@@ -1,0 +1,39 @@
+      - name: Install rust prerequisites
+        shell: curl https://getsubstrate.io -sSf | bash -s -- --fast
+
+      - name: Install pexpect
+        apt: 
+          name: python-pexpect
+          state: present
+           
+          #- name: Install rust
+        #      expect:
+                #          command: curl https://sh.rustup.rs -sSf | sh
+#          responses
+
+      - name: run expect
+        shell: |
+          set timeout 100
+          spawn curl https://sh.rustup.rs -sSf | sh
+
+          expect ">"
+          send "1\n"
+
+          exit 0
+
+      - name: Soure
+        shell: . $HOME/.cargo/env
+
+      - name: Use latest Rust stable
+        shell: rustup default stable
+
+      - name: Download the Substrate node template
+        git:
+          repo: https://github.com/substrate-developer-hub/substrate-node-template.git
+          dest: "{{ base_directory }}"
+
+      - name: Ensure your Rust toolchain is up to date
+        shell: "{{ base_directory }}/scripts/init.sh"
+
+      - name: Compile the node-template
+        shell: cd {{ base_directory }} && cargo build --release
